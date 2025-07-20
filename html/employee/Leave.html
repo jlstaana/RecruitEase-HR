@@ -1,0 +1,1344 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>My Leave | J. Alcabasa HR Management System</title>
+  <link rel="icon" type="image/png" href="/assets/logo.jpg"/>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"/>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet"/>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+  <style>
+    /* Root variables for theming */
+    :root {
+      /* Main Brand Colors (desaturated for professional look) */
+      --main-brand-color: #c0392b; /* A more subdued, professional red */
+      --main-brand-color-light: #fbecec; /* Lighter shade for accents/hover */
+      --main-brand-color-bg-hover: rgba(192, 57, 43, 0.08); /* Soft hover state */
+      --main-brand-color-border: #e6b0ad; /* For borders/outlines */
+
+      /* Neutral Palette */
+      --body-bg: #f9fafb; /* Light, airy background */
+      --text-color: #34495e; /* Darker text for readability */
+      --text-color-secondary: #7f8c8d; /* Muted secondary text */
+      --text-color-light: #bdc3c7; /* Lighter text for placeholders/hints */
+      --card-bg: #ffffff;
+      --sidebar-bg: #ffffff;
+      --top-navbar-bg: white;
+      --border-color: #ecf0f1; /* Very light, subtle border */
+      --shadow-color: rgba(0,0,0,0.06); /* General softer shadow */
+      --card-shadow: rgba(0,0,0,0.08); /* Slightly more prominent card shadow */
+      --red-accent-shadow: rgba(192,57,43,0.1); /* Subtle red tint for focus states */
+
+      /* Status Colors (slightly adjusted for consistency) */
+      --status-success: #27ae60;
+      --status-warning: #f39c12;
+      --status-danger: #e74c3c;
+      --status-info: #3498db;
+      --status-secondary: #95a5a6;
+    }
+
+    /* Dark Mode Overrides */
+    body.dark-mode {
+      color-scheme: dark; /* Helps with browser-native UI like scrollbars */
+      --main-brand-color: #ff6b6b; /* Brighter red for dark mode contrast */
+      --main-brand-color-light: #4a1a1a;
+      --main-brand-color-bg-hover: rgba(255,107,107,0.15);
+      --main-brand-color-border: #5c2020;
+
+      --body-bg: #1f252d;
+      --text-color: #ecf0f1;
+      --text-color-secondary: #bdc3c7;
+      --text-color-light: #7f8c8d;
+      --card-bg: #2d343c;
+      --sidebar-bg: #2d343c;
+      --top-navbar-bg: #2d343c;
+      --border-color: #3a4756;
+      --shadow-color: rgba(0,0,0,0.25);
+      --card-shadow: rgba(0,0,0,0.35);
+      --red-accent-shadow: rgba(255,107,107,0.15);
+
+      /* Dark mode status colors */
+      --status-success: #2ecc71;
+      --status-warning: #f1c40f;
+      --status-danger: #e74c3c;
+      --status-info: #3498db;
+      --status-secondary: #95a5a6;
+    }
+
+    /* Base Body Styles */
+    body {
+      background-color: var(--body-bg);
+      overflow-x: hidden;
+      color: var(--text-color);
+      transition: background-color 0.3s ease, color 0.3s ease;
+      font-family: 'Segoe UI', Arial, sans-serif; /* Professional font */
+      font-size: 0.95rem; /* Standard body font size */
+      line-height: 1.6;
+    }
+
+    /* Scrollbar Styling (subtle for professionalism) */
+    body::-webkit-scrollbar {
+        width: 8px;
+    }
+    body::-webkit-scrollbar-track {
+        background: var(--body-bg);
+    }
+    body::-webkit-scrollbar-thumb {
+        background: var(--border-color);
+        border-radius: 4px;
+    }
+    body::-webkit-scrollbar-thumb:hover {
+        background: var(--text-color-light);
+    }
+
+
+    /* Sidebar Styles */
+    .sidebar {
+      width: 260px; /* Slightly wider for content */
+      background-color: var(--sidebar-bg);
+      color: var(--main-brand-color);
+      position: fixed;
+      height: 100vh;
+      padding: 2rem 1.5rem; /* Increased padding */
+      left: -270px; /* Adjusted for wider sidebar */
+      top: 0;
+      transition: left 0.3s cubic-bezier(.77,0,.18,1), background-color 0.3s ease;
+      z-index: 1050;
+      box-shadow: 2px 0 10px var(--shadow-color); /* Softer shadow */
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+    }
+    .sidebar.show {
+      left: 0;
+    }
+    .sidebar img {
+      width: 80px; /* Adjusted logo size for balance */
+      height: 80px;
+      object-fit: cover;
+      margin-bottom: 1.5rem; /* More space */
+      display: block;
+      margin-left: auto;
+      margin-right: auto;
+      border-radius: 50%; /* Ensure perfect circle */
+      border: 2px solid var(--main-brand-color-border); /* Subtle border around logo */
+    }
+    .sidebar h4 {
+      color: var(--main-brand-color);
+      transition: color 0.3s ease;
+      font-weight: 600; /* Bolder heading */
+      font-size: 1.15rem; /* Slightly smaller for sidebar */
+    }
+    .sidebar a {
+      color: var(--text-color-secondary); /* Muted link color */
+      text-decoration: none;
+      display: flex;
+      align-items: center;
+      padding: 0.85rem 1.2rem; /* More padding */
+      border-radius: 0.6rem; /* More rounded */
+      font-size: 0.95rem;
+      width: 100%;
+      transition: background 0.2s ease-in-out, color 0.2s ease-in-out;
+      font-weight: 500;
+      gap: 0.75rem; /* Increased gap for icon and text */
+    }
+    .sidebar a:hover, .sidebar a.fw-bold {
+      background-color: var(--main-brand-color-bg-hover);
+      color: var(--main-brand-color);
+    }
+    .sidebar a.fw-bold { /* Ensure active link is clearly visible */
+        color: var(--main-brand-color);
+        font-weight: 600;
+    }
+    .sidebar .active-label {
+      text-align: center;
+      background-color: var(--main-brand-color);
+      color: #ffffff;
+      font-weight: bold;
+      padding: 0.6rem 1rem; /* Adjusted padding */
+      border-radius: 0.4rem; /* More rounded */
+      margin-bottom: 2rem; /* More space */
+      width: 100%;
+      letter-spacing: 0.8px; /* Slight letter spacing for enterprise feel */
+      font-size: 0.85rem;
+      text-transform: uppercase; /* Uppercase for formal look */
+    }
+    .sidebar-backdrop {
+      display: none;
+    }
+    .sidebar-backdrop.show {
+      display: block;
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(0,0,0,0.15); /* Softer backdrop */
+      z-index: 1049;
+    }
+
+    /* Sidebar Toggle */
+    .sidebar-toggle {
+      background: none;
+      border: none;
+      color: var(--main-brand-color);
+      font-size: 1.8rem; /* Adjusted size */
+      display: flex;
+      align-items: center;
+      cursor: pointer;
+      z-index: 1100;
+      transition: color 0.3s ease;
+      padding: 0.2rem; /* Small padding for click area */
+    }
+    .sidebar-toggle i {
+      font-size: 1.8rem; /* Consistent icon size */
+    }
+
+    /* Main Content Area */
+    .dashboard-content {
+      padding: 2rem; /* Uniform padding */
+      transition: margin-left 0.3s;
+      margin-left: 0;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center; /* Center content horizontally */
+    }
+    .sidebar-visible .dashboard-content {
+      margin-left: 260px; /* Adjusted for wider sidebar */
+    }
+
+    /* Top Navbar */
+    .top-navbar {
+      background-color: var(--top-navbar-bg);
+      padding: 0.8rem 2rem; /* Adjusted padding */
+      border-bottom: 1px solid var(--border-color);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      position: sticky; /* Make it sticky */
+      top: 0;
+      z-index: 1200;
+      transition: margin-left 0.3s, background-color 0.3s ease, border-color 0.3s ease;
+      margin-left: 0;
+      box-shadow: 0 2px 8px var(--shadow-color); /* Subtle shadow */
+    }
+    .sidebar-visible .top-navbar {
+      margin-left: 260px; /* Adjusted for wider sidebar */
+    }
+    .top-navbar .navbar-logo {
+        height: 36px; /* Slightly smaller logo */
+        width: auto;
+        margin-right: 0.75rem; /* More space */
+        transition: height 0.3s ease;
+    }
+    .top-navbar .bi {
+      color: var(--main-brand-color);
+      font-size: 1.15rem; /* Consistent icon size */
+      margin-left: 1rem;
+      transition: color 0.3s ease;
+    }
+    .top-navbar .ms-2 {
+      font-size: 0.95rem;
+      font-weight: 500;
+      color: var(--text-color);
+      transition: color 0.3s ease;
+    }
+    .top-navbar .ms-2 small {
+        color: var(--text-color-secondary);
+        font-weight: 400; /* Regular weight for welcome text */
+        display: block; /* Ensure it's on its own line */
+        font-size: 0.85rem;
+    }
+
+    /* Dark Mode Toggle specific styles */
+    .dark-mode-toggle {
+      background: none;
+      border: none;
+      color: var(--text-color-secondary); /* Neutral color for toggle */
+      font-size: 1.15rem;
+      margin-left: 1rem;
+      cursor: pointer;
+      transition: color 0.3s ease;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 0.25rem;
+    }
+    .dark-mode-toggle:hover {
+        color: var(--main-brand-color); /* Hover effect */
+    }
+    body.dark-mode .dark-mode-toggle {
+      background: none;
+    }
+    .dark-mode-toggle i {
+      font-size: 1.15rem;
+    }
+
+    /* Dashboard Page Specific Styles */
+    .dashboard-container {
+      max-width: 1500px; /* Wider container for more content */
+      background: var(--card-bg);
+      border-radius: 1rem; /* Standard rounded corners */
+      box-shadow: 0 8px 25px var(--card-shadow); /* More pronounced, soft shadow */
+      padding: 3rem; /* Generous padding */
+      margin-top: 2.5rem;
+      margin-bottom: 2.5rem;
+      transition: background-color 0.3s ease, box-shadow 0.3s ease;
+      width: 100%; /* Ensure it takes full width within max-width */
+    }
+    .dashboard-container h4 {
+      color: var(--text-color); /* Use general text color for headings */
+      font-weight: 600; /* Medium bold */
+      margin-bottom: 2rem; /* More space below heading */
+      font-size: 1.8rem; /* Prominent heading */
+      transition: color 0.3s ease;
+      border-bottom: 1px solid var(--border-color); /* Subtle line below heading */
+      padding-bottom: 1rem; /* Space for the line */
+    }
+    .table-responsive {
+      margin-top: 2.5rem; /* More space above table */
+    }
+    /* Table Styling */
+    .table {
+        --bs-table-bg: var(--card-bg);
+        --bs-table-color: var(--text-color);
+        --bs-table-border-color: var(--border-color);
+        vertical-align: middle; /* Vertically align content in table cells */
+        font-size: 0.9rem; /* Slightly smaller text for tables */
+        border-collapse: separate; /* Required for border-radius on cells */
+        border-spacing: 0; /* Remove default spacing */
+    }
+    .table-responsive {
+        border-radius: 0.75rem; /* Rounded corners for the entire table container */
+        overflow: hidden; /* Hide overflow to respect border-radius */
+        box-shadow: 0 4px 20px var(--shadow-color); /* Subtle shadow for the table */
+        border: 1px solid var(--border-color); /* Overall table border */
+    }
+    .table th,
+    .table td {
+        padding: 1rem 1.2rem; /* Generous padding for cells */
+        border-bottom: 1px solid var(--border-color); /* Only bottom border */
+        border-right: 1px solid var(--border-color); /* Right border for columns */
+    }
+    .table thead th {
+        background-color: var(--body-bg); /* Lighter background for header */
+        font-weight: 600; /* Bolder headers */
+        font-size: 0.95rem;
+        color: var(--text-color-secondary); /* Muted header text */
+        text-transform: uppercase; /* Uppercase for formal look */
+        letter-spacing: 0.5px;
+        position: sticky; /* Sticky header */
+        top: 0;
+        z-index: 1; /* Ensure header stays above content */
+    }
+
+    .table tbody tr:last-child td {
+        border-bottom: none; /* No bottom border for the last row */
+    }
+    .table thead th:last-child,
+    .table tbody td:last-child {
+        border-right: none; /* No right border for the last column */
+    }
+
+    /* Striped rows for better readability */
+    .table tbody tr:nth-of-type(even) {
+        background-color: var(--main-brand-color-bg-hover); /* Light stripe */
+    }
+    .table tbody tr:hover {
+        background-color: var(--main-brand-color-light); /* Highlight on hover */
+        cursor: pointer;
+    }
+    body.dark-mode .table tbody tr:nth-of-type(even) {
+        background-color: rgba(255,107,107,0.05); /* Dark mode stripe */
+    }
+    body.dark-mode .table tbody tr:hover {
+        background-color: rgba(255,107,107,0.1); /* Dark mode hover */
+    }
+
+    /* Remove default table borders */
+    .table-bordered {
+      border: none;
+    }
+    .table-bordered thead th {
+      border-bottom-width: 2px;
+      border-color: var(--border-color);
+    }
+    .table-bordered tbody td {
+        border-color: var(--border-color);
+    }
+
+    .table .bg-white { /* Override for table cells to ensure proper background in dark mode */
+        background-color: transparent !important; /* Make transparent to show stripes */
+        color: var(--text-color);
+    }
+    /* Adjusted badge colors and styles */
+    .table .badge {
+        font-weight: 600;
+        padding: 0.45em 0.8em; /* Slightly larger badges */
+        border-radius: 0.35rem; /* More rounded */
+        text-transform: capitalize; /* Capitalize for status */
+        min-width: 80px; /* Minimum width for consistency */
+        display: inline-block;
+        text-align: center;
+    }
+    .table .badge.bg-success { background-color: var(--status-success) !important; color: white !important;}
+    .table .badge.bg-warning { background-color: var(--status-warning) !important; color: black !important;}
+    .table .badge.bg-danger { background-color: var(--status-danger) !important; color: white !important;}
+    .table .badge.bg-info { background-color: var(--status-info) !important; color: white !important;}
+    .table .badge.bg-secondary { background-color: var(--status-secondary) !important; color: white !important;}
+
+
+    /* Summary Cards */
+    .summary-card {
+        background-color: var(--card-bg);
+        border-radius: 0.8rem; /* Consistent rounding */
+        padding: 1.5rem; /* Adjusted: Smaller padding */
+        box-shadow: 0 4px 18px var(--card-shadow); /* Softer, larger shadow */
+        text-align: center;
+        transition: background-color 0.3s ease, box-shadow 0.3s ease;
+        border: 1px solid var(--border-color); /* Subtle border */
+        height: 100%; /* Ensure cards are same height */
+    }
+    .summary-card .icon {
+        font-size: 2rem; /* Adjusted: Smaller icon */
+        color: var(--main-brand-color);
+        margin-bottom: 0.6rem; /* Adjusted: Less space */
+        display: block;
+    }
+    .summary-card .value {
+        font-size: 1.8rem; /* Adjusted: Smaller value */
+        font-weight: bold;
+        color: var(--text-color);
+        margin-bottom: 0.2rem;
+    }
+    .summary-card .label {
+        font-size: 0.85rem; /* Adjusted: Smaller label size */
+        color: var(--text-color-secondary);
+        font-weight: 500;
+    }
+    /* Specific status colors for cards */
+    .summary-card.pending .icon { color: var(--status-warning); }
+    .summary-card.approved .icon { color: var(--status-success); }
+    .summary-card.rejected .icon { color: var(--status-danger); }
+
+    /* Filter & Action Bar */
+    .filter-actions-bar {
+        background-color: var(--card-bg);
+        padding: 2.2rem 2.5rem; /* Increased padding */
+        border-radius: 0.8rem; /* Consistent rounding */
+        box-shadow: 0 4px 18px var(--shadow-color);
+        margin-bottom: 2.5rem; /* More space below bar */
+        display: flex;
+        flex-wrap: wrap; /* Allow items to wrap */
+        gap: 1rem; /* Consistent gap between elements */
+        align-items: flex-start; /* Align items to the top for multi-line inputs */
+        justify-content: flex-start; /* Align items to the start */
+        transition: background-color 0.3s ease, box-shadow 0.3s ease;
+        border: 1px solid var(--border-color); /* Subtle border */
+    }
+    .filter-actions-bar .form-control,
+    .filter-actions-bar .form-select {
+        flex: 1;
+        min-width: 220px; /* Ensures inputs are not too small */
+        border-color: var(--border-color);
+        background-color: var(--body-bg); /* Use body bg for inputs */
+        color: var(--text-color);
+        padding: 0.7rem 0.9rem; /* More padding */
+        border-radius: 0.4rem; /* More rounded */
+        font-size: 0.9rem;
+        transition: border-color 0.3s ease, background-color 0.3s ease, color 0.3s ease, box-shadow 0.3s ease;
+    }
+    .filter-actions-bar .form-control::placeholder {
+        color: var(--text-color-light);
+    }
+    .filter-actions-bar .form-control:focus,
+    .filter-actions-bar .form-select:focus {
+        border-color: var(--main-brand-color);
+        box-shadow: 0 0 0 0.2rem var(--main-brand-color-light);
+        background-color: var(--card-bg); /* White background on focus */
+    }
+    /* Modern Button Styles */
+    .btn {
+        min-width: 140px; /* Slightly larger min-width for buttons */
+        padding: 0.75rem 1.25rem; /* More padding */
+        border-radius: 0.5rem; /* More rounded for modern look */
+        font-weight: 600; /* Bolder text for prominence */
+        font-size: 0.95rem; /* Slightly larger font size */
+        transition: background-color 0.2s ease-in-out, border-color 0.2s ease-in-out, box-shadow 0.2s ease-in-out, color 0.2s ease-in-out;
+        display: inline-flex; /* For icon alignment */
+        align-items: center;
+        justify-content: center;
+        gap: 0.6rem; /* Space between icon and text */
+        box-shadow: 0 2px 5px var(--shadow-color); /* Subtle default shadow */
+        border-width: 1px; /* Thinner border */
+    }
+
+    .btn:hover {
+        transform: translateY(-1px); /* Slight lift on hover */
+        box-shadow: 0 4px 10px var(--shadow-color); /* Enhanced shadow on hover */
+    }
+
+    .btn:active {
+        transform: translateY(0); /* Press down effect */
+        box-shadow: 0 1px 3px var(--shadow-color);
+    }
+
+    .btn:focus {
+        outline: none;
+        box-shadow: 0 0 0 0.2rem var(--main-brand-color-light), 0 2px 5px var(--shadow-color); /* Focus ring with subtle shadow */
+    }
+
+    /* Specific Button Color Overrides */
+    .btn-danger {
+        background-color: var(--main-brand-color);
+        border-color: var(--main-brand-color);
+        color: white;
+    }
+    .btn-danger:hover {
+        background-color: #a03024; /* Darker red on hover */
+        border-color: #a03024;
+    }
+    .btn-danger:focus {
+        box-shadow: 0 0 0 0.2rem rgba(192, 57, 43, 0.25);
+    }
+
+    .btn-outline-danger {
+        color: var(--main-brand-color);
+        border-color: var(--main-brand-color);
+        background-color: transparent;
+    }
+    .btn-outline-danger:hover {
+        background-color: var(--main-brand-color);
+        color: white;
+    }
+    .btn-outline-danger:focus {
+        box-shadow: 0 0 0 0.2rem rgba(192, 57, 43, 0.25);
+    }
+
+    .btn-primary {
+        background-color: var(--status-info); /* Using info blue as primary for diversity */
+        border-color: var(--status-info);
+        color: white;
+    }
+    .btn-primary:hover {
+        background-color: #2a7cbd;
+        border-color: #2a7cbd;
+    }
+    .btn-primary:focus {
+        box-shadow: 0 0 0 0.2rem rgba(52, 152, 219, 0.25);
+    }
+
+    .btn-info {
+        background-color: #1abc9c; /* Consistent info color */
+        border-color: #1abc9c;
+        color: white;
+    }
+    .btn-info:hover {
+        background-color: #148f77;
+        border-color: #148f77;
+    }
+    .btn-info:focus {
+        box-shadow: 0 0 0 0.2rem rgba(26, 188, 156, 0.25);
+    }
+
+    .btn-secondary {
+        background-color: var(--status-secondary);
+        border-color: var(--status-secondary);
+        color: white;
+    }
+    .btn-secondary:hover {
+        background-color: #6c7a7b;
+        border-color: #6c7a7b;
+    }
+    .btn-secondary:focus {
+        box-shadow: 0 0 0 0.2rem rgba(149, 165, 166, 0.25);
+    }
+
+    .btn-success {
+        background-color: var(--status-success);
+        border-color: var(--status-success);
+        color: white;
+    }
+    .btn-success:hover {
+        background-color: #229954;
+        border-color: #229954;
+    }
+    .btn-success:focus {
+        box-shadow: 0 0 0 0.2rem rgba(39, 174, 96, 0.25);
+    }
+
+    /* Table Actions Button - smaller and subtle */
+    .table .btn {
+        min-width: unset; /* Remove min-width constraint for table buttons */
+        padding: 0.5rem 0.8rem; /* Smaller padding */
+        font-size: 0.85rem; /* Smaller font */
+        box-shadow: none; /* No shadow for table buttons */
+        transition: background-color 0.15s ease-in-out, color 0.15s ease-in-out;
+    }
+    .table .btn:hover {
+        transform: none; /* No lift on hover for table buttons */
+        box-shadow: none;
+    }
+    .table .btn-outline-secondary {
+        color: var(--text-color-secondary);
+        border-color: var(--border-color);
+        background-color: transparent;
+    }
+    .table .btn-outline-secondary:hover {
+        background-color: var(--border-color);
+        color: var(--text-color);
+    }
+    .table .btn-outline-secondary:focus {
+        box-shadow: 0 0 0 0.2rem var(--border-color);
+    }
+
+
+    .filter-actions-bar .dropdown-menu {
+        background-color: var(--card-bg);
+        border-color: var(--border-color);
+        border-radius: 0.75rem; /* Consistent rounding */
+        box-shadow: 0 6px 20px var(--shadow-color); /* Softer shadow */
+        padding: 0.5rem 0; /* Adjusted padding */
+    }
+    .filter-actions-bar .dropdown-item {
+        color: var(--text-color);
+        padding: 0.7rem 1.2rem; /* More padding */
+        display: flex;
+        align-items: center;
+        gap: 0.8rem; /* More space for icons */
+        font-size: 0.9rem;
+    }
+    .filter-actions-bar .dropdown-item:hover {
+        background-color: var(--main-brand-color-bg-hover);
+        color: var(--main-brand-color);
+    }
+
+    /* Flatpickr Dark Mode adjustments */
+    body.dark-mode .flatpickr-calendar {
+        background: var(--card-bg) !important;
+        border-color: var(--border-color) !important;
+        color: var(--text-color) !important;
+        box-shadow: 0 6px 20px rgba(0,0,0,0.4) !important;
+    }
+    body.dark-mode .flatpickr-day.selected,
+    body.dark-mode .flatpickr-day.startRange,
+    body.dark-mode .flatpickr-day.endRange {
+        background: var(--main-brand-color) !important;
+        border-color: var(--main-brand-color) !important;
+        color: white !important;
+    }
+    body.dark-mode .flatpickr-day.today:not(.selected) {
+        border-color: var(--main-brand-color) !important;
+        color: var(--text-color) !important;
+    }
+    body.dark-mode .flatpickr-day:hover,
+    body.dark-mode .flatpickr-day.inRange {
+        background: var(--main-brand-color-bg-hover) !important;
+        color: var(--text-color) !important;
+    }
+    body.dark-mode .flatpickr-month,
+    body.dark-mode .flatpickr-weekday,
+    body.dark-mode .flatpickr-current-month .flatpickr-monthDropdown-months,
+    body.dark-mode .numInputWrapper span,
+    body.dark-mode .flatpickr-time input {
+        color: var(--text-color) !important;
+    }
+    body.dark-mode .flatpickr-arrows .flatpickr-prev-month,
+    body.dark-mode .flatpickr-arrows .flatpickr-next-month {
+        color: var(--text-color) !important;
+    }
+
+
+    /* Pagination styles */
+    .pagination .page-item .page-link {
+        background-color: var(--card-bg);
+        border-color: var(--border-color);
+        color: var(--text-color);
+        padding: 0.7rem 1rem; /* More padding */
+        border-radius: 0.4rem; /* More rounded */
+        margin: 0 0.2rem; /* Space between links */
+        transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
+        font-size: 0.9rem;
+    }
+    .pagination .page-item.active .page-link {
+        background-color: var(--main-brand-color);
+        border-color: var(--main-brand-color);
+        color: white;
+    }
+    .pagination .page-item .page-link:hover {
+        background-color: var(--main-brand-color-bg-hover);
+        color: var(--main-brand-color); /* Hover color for text */
+        border-color: var(--main-brand-color-light);
+    }
+    body.dark-mode .pagination .page-item .page-link:hover {
+        color: var(--text-color) !important; /* Ensure hover text color in dark mode */
+    }
+
+    /* Specific styles for table action dropdowns */
+    .table .dropdown-toggle::after {
+        vertical-align: middle;
+        margin-left: 0.5rem;
+    }
+    .table .dropdown-menu {
+        min-width: 13rem; /* Ensure enough width for text and icons */
+        background-color: var(--card-bg);
+        border-color: var(--border-color);
+        box-shadow: 0 4px 15px var(--shadow-color);
+        border-radius: 0.6rem; /* Consistent rounding */
+        padding: 0.5rem 0;
+    }
+    .table .dropdown-item {
+        display: flex;
+        align-items: center;
+        gap: 0.6rem;
+        color: var(--text-color);
+        padding: 0.65rem 1rem;
+        font-size: 0.9rem;
+    }
+    .table .dropdown-item:hover {
+        background-color: var(--main-brand-color-bg-hover);
+        color: var(--main-brand-color);
+    }
+    .table .dropdown-item.text-success { color: var(--status-success) !important;}
+    .table .dropdown-item.text-danger { color: var(--status-danger) !important;}
+    .table .dropdown-item.text-warning { color: var(--status-warning) !important;}
+    .table .dropdown-item.text-success:hover { background-color: rgba(39,174,96,0.1) !important;}
+    .table .dropdown-item.text-danger:hover { background-color: rgba(231,76,60,0.1) !important;}
+    .table .dropdown-item.text-warning:hover { background-color: rgba(243,156,18,0.1) !important; }
+
+    /* Modal styling */
+    .modal-content {
+        background-color: var(--card-bg);
+        color: var(--text-color);
+        border-radius: 1rem;
+        box-shadow: 0 8px 30px var(--card-shadow);
+        border: 1px solid var(--border-color);
+    }
+    .modal-header {
+        border-bottom: 1px solid var(--border-color);
+        padding: 1rem 1.5rem; /* Adjusted padding */
+    }
+    .modal-header .modal-title {
+        color: var(--text-color);
+        font-weight: 600;
+        font-size: 1.15rem; /* Adjusted font size */
+    }
+    .modal-body {
+        padding: 1.5rem 2rem; /* Adjusted padding */
+        overflow-y: auto; /* Added scrollbar */
+    }
+    .modal-footer {
+        border-top: 1px solid var(--border-color);
+        padding: 0.75rem 2rem; /* Adjusted padding */
+    }
+    .modal .form-label {
+        font-weight: 500;
+        color: var(--text-color-secondary);
+        font-size: 0.85rem; /* Adjusted font size */
+        margin-bottom: 0.2rem; /* Adjusted margin */
+    }
+    .modal .form-control,
+    .modal .form-select,
+    .modal textarea.form-control {
+        border-color: var(--border-color);
+        background-color: var(--body-bg);
+        color: var(--text-color);
+        padding: 0.5rem 0.8rem; /* Adjusted padding */
+        border-radius: 0.4rem;
+        font-size: 0.8rem; /* Adjusted font size */
+    }
+    .modal .form-control:focus,
+    .modal .form-select:focus,
+    .modal textarea.form-control:focus {
+        border-color: var(--main-brand-color);
+        box-shadow: 0 0 0 0.2rem var(--main-brand-color-light);
+        background-color: var(--card-bg);
+    }
+
+    /* Specific adjustments for Add Leave Modal */
+    #requestLeaveModal .modal-dialog {
+        max-width: 950px; /* Wider */
+        margin: 1.75rem auto; /* Vertical centering and reduced top/bottom margin */
+    }
+    #requestLeaveModal .modal-body .row {
+        margin-bottom: 0.75rem; /* Reduce space between rows of inputs */
+    }
+    #requestLeaveModal .modal-body .mb-3 {
+        margin-bottom: 0.75rem !important; /* Make form fields more compact */
+    }
+    /* Position modal lower and centered */
+    #requestLeaveModal.fade .modal-dialog {
+        transform: translate(-50%, 20%); /* Shift down from perfect center */
+        left: 50%; /* Ensure horizontal centering */
+        top: 0; /* Reset top for transform to work relative to viewport */
+        position: absolute; /* Needed for transform to work as expected with left/top */
+    }
+
+
+    /* Responsive adjustments */
+    @media (max-width: 991.98px) {
+      .top-navbar {
+        justify-content: space-between;
+      }
+      .top-navbar .sidebar-toggle {
+        display: flex;
+      }
+      .dashboard-content,
+      .top-navbar {
+        margin-left: 0 !important;
+      }
+      .sidebar-toggle {
+        display: flex !important;
+      }
+      .dashboard-container {
+        padding: 1.5rem 1rem;
+      }
+      .filter-actions-bar {
+        flex-direction: column;
+        align-items: stretch;
+      }
+      .filter-actions-bar .form-control,
+      .filter-actions-bar .form-select,
+      .filter-actions-bar .btn,
+      .filter-actions-bar .dropdown,
+      .filter-actions-bar .btn-group { /* Target btn-group for full width */
+        min-width: unset;
+        width: 100%;
+      }
+      .filter-actions-bar .d-flex.gap-2 {
+          flex-direction: column;
+          width: 100%;
+      }
+      .filter-actions-bar .d-flex.gap-2 button {
+          width: 100%;
+      }
+      /* Prevent text wrapping in table headers/cells on smaller screens if they become too narrow */
+      .table-responsive .table thead th,
+      .table-responsive .table tbody td {
+          white-space: nowrap; /* Keep text on one line */
+      }
+    }
+
+    /* New/Modified CSS for smaller summary cards */
+    .summary-card-section {
+        background-color: var(--card-bg);
+        padding: 2.2rem 2.5rem; /* Consistent with filter-actions-bar */
+        border-radius: 0.8rem; /* Consistent with filter-actions-bar */
+        box-shadow: 0 4px 18px var(--shadow-color);
+        margin-bottom: 2.5rem; /* Space below this section */
+        border: 1px solid var(--border-color); /* Subtle border */
+        display: flex; /* For flexible alignment of inner row */
+        justify-content: center; /* Center the cards row */
+    }
+    .row.justify-content-center.g-4 {
+        max-width: 900px; /* Constrain the row width for centering */
+        margin-left: auto;
+        margin-right: auto;
+        width: 100%; /* Ensure the row takes full width of its parent */
+    }
+    .summary-card-col {
+        max-width: 250px; /* Maximum width for each card column */
+        flex: 1 1 200px; /* Allow cards to grow/shrink but with a base of 200px */
+    }
+    @media (min-width: 768px) { /* On medium screens and up */
+        .summary-card-col {
+            flex: 0 0 30% !important; /* Forces 3 cards per row, approximately 30% width each */
+            max-width: 30% !important; /* Ensures consistent sizing */
+        }
+    }
+    @media (min-width: 992px) { /* On large screens and up */
+        .summary-card-col {
+            flex: 0 0 25% !important; /* Even smaller for more content on large screens */
+            max-width: 25% !important;
+        }
+    }
+    @media (max-width: 575.98px) { /* On extra small screens, stack them */
+        .summary-card-col {
+            flex: 1 1 100% !important; /* Stack vertically on small phones */
+            max-width: 100% !important;
+        }
+    }
+
+  </style>
+</head>
+<body>
+
+  <div class="sidebar-backdrop" id="sidebarBackdrop"></div>
+
+  <div class="sidebar" id="sidebar">
+    <div class="w-100 d-flex justify-content-center align-items-center mb-3">
+      <img src="/assets/logo.jpg" alt="Company Logo" class="img-fluid rounded-circle mb-2">
+    </div>
+    <h4 class="mb-3 dashboard-section-title text-center"> J. Alcabasa HR Management System </h4>
+    <div class="active-label">EMPLOYEE PORTAL</div>
+    <a href="dashboard.html"><i class="bi bi-house-door-fill me-2"></i> Dashboard</a>
+    <a href="attendance.html"><i class="bi bi-clock-history me-2"></i> My Attendance</a>
+    <a href="leave.html" class="fw-bold active"><i class="bi bi-calendar2-check me-2"></i> My Leave</a>
+    <a href="payroll.html"><i class="bi bi-cash-coin me-2"></i> My Payroll</a>
+    <a href="/login/Login.html"><i class="bi bi-box-arrow-right me-2"></i> Logout</a>
+  </div>
+
+  <div class="top-navbar" id="topNavbar">
+    <div class="d-flex align-items-center">
+      <img src="/assets/logo.jpg" alt="Company Logo" class="navbar-logo rounded-circle">
+      <button class="sidebar-toggle" id="sidebarToggle" aria-label="Toggle sidebar">
+        <i class="bi bi-list"></i>
+      </button>
+    </div>
+    <div class="d-flex align-items-center ms-auto">
+      <button class="dark-mode-toggle" id="darkModeToggle" aria-label="Toggle dark mode">
+        <i class="bi bi-moon-fill"></i>
+      </button>
+      <a href="Notifications.html" style="text-decoration:none;">
+        <i class="bi bi-bell-fill"></i>
+      </a>
+      <a href="profile.html" style="text-decoration:none;">
+        <i class="bi bi-person-circle"></i>
+      </a>
+      <span class="ms-2" id="employeeNameDisplay">Employee Name<br><small>Welcome!</small></span>
+    </div>
+  </div>
+
+  <div class="dashboard-content" id="mainContent">
+    <div class="container dashboard-container">
+      <h4 class="mb-4">My Leave Requests</h4>
+
+      <div class="row mb-5 justify-content-center g-4">
+        <div class="col-md-4 mb-3">
+          <div class="summary-card pending">
+            <i class="bi bi-hourglass-split icon"></i>
+            <div class="value" id="myPendingRequests">--</div>
+            <div class="label">Pending Requests</div>
+          </div>
+        </div>
+        <div class="col-md-4 mb-3">
+          <div class="summary-card approved">
+            <i class="bi bi-check-circle-fill icon"></i>
+            <div class="value" id="myApprovedLeaves">--</div>
+            <div class="label">Approved Leaves This Year</div>
+          </div>
+        </div>
+        <div class="col-md-4 mb-3">
+          <div class="summary-card rejected">
+            <i class="bi bi-x-circle-fill icon"></i>
+            <div class="value" id="myRejectedRequests">--</div>
+            <div class="label">Rejected Requests This Year</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="filter-actions-bar mb-5">
+        <input type="text" id="leaveTypeFilter" class="form-control" placeholder="Filter by Leave Type">
+        <input type="text" id="dateRangePicker" class="form-control" placeholder="Select Date Range">
+        <select id="statusFilter" class="form-select">
+          <option value="">All Statuses</option>
+          <option value="Pending">Pending</option>
+          <option value="Approved">Approved</option>
+          <option value="Rejected">Rejected</option>
+        </select>
+        <button class="btn btn-success ms-auto" data-bs-toggle="modal" data-bs-target="#requestLeaveModal"><i class="bi bi-plus-circle me-2"></i>Request New Leave</button>
+      </div>
+
+      <div class="table-responsive">
+        <table class="table table-hover" id="leaveRequestsTable">
+          <thead>
+            <tr>
+              <th>Request ID</th>
+              <th>Leave Type</th>
+              <th>Start Date</th>
+              <th>End Date</th>
+              <th>Days</th>
+              <th>Status</th>
+              <th class="text-center">Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            <!-- Leave requests will be rendered here by JS filter logic -->
+          </tbody>
+        </table>
+      </div>
+
+      <nav aria-label="Page navigation" class="mt-4">
+        <ul class="pagination justify-content-center">
+          <li class="page-item disabled">
+            <a class="page-link" href="#" tabindex="-1" aria-disabled="true">Previous</a>
+          </li>
+          <li class="page-item active"><a class="page-link" href="#">1</a></li>
+          <li class="page-item"><a class="page-link" href="#">2</a></li>
+          <li class="page-item"><a class="page-link" href="#">3</a></li>
+          <li class="page-item">
+            <a class="page-link" href="#">Next</a>
+          </li>
+        </ul>
+      </nav>
+
+    </div>
+  </div>
+
+  <div class="modal fade" id="requestLeaveModal" tabindex="-1" aria-labelledby="requestLeaveModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title d-flex align-items-center gap-2" id="requestLeaveModalLabel">
+            <i class="bi bi-calendar-plus text-info"></i>
+            Request New Leave
+          </h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <form id="requestLeaveForm">
+            <div class="mb-3">
+              <label for="leaveType" class="form-label">Leave Type</label>
+              <select class="form-select" id="leaveType" required>
+                <option value="">Select Leave Type</option>
+                <option>Sick Leave</option>
+                <option>Vacation Leave</option>
+                <option>Maternity Leave</option>
+                <option>Paternity Leave</option>
+                <option>Emergency Leave</option>
+                <option>Bereavement Leave</option>
+              </select>
+            </div>
+            <div class="row">
+              <div class="col-md-6 mb-3">
+                <label for="leaveStartDate" class="form-label">Start Date</label>
+                <input type="text" class="form-control flatpickr-input" id="leaveStartDate" placeholder="Select Start Date" required>
+              </div>
+              <div class="col-md-6 mb-3">
+                <label for="leaveEndDate" class="form-label">End Date</label>
+                <input type="text" class="form-control flatpickr-input" id="leaveEndDate" placeholder="Select End Date" required>
+              </div>
+            </div>
+            <div class="mb-3">
+              <label for="leaveReason" class="form-label">Reason</label>
+              <textarea class="form-control" id="leaveReason" rows="3" required></textarea>
+            </div>
+            <div class="mb-3">
+              <label for="supportingDocument" class="form-label">Supporting Document (Optional)</label>
+              <input type="file" class="form-control" id="supportingDocument" accept=".pdf,.doc,.docx,.jpg,.png">
+              <div class="form-text text-muted">e.g., Medical certificate for sick leave.</div>
+            </div>
+          </form>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+          <button type="submit" class="btn btn-primary" form="requestLeaveForm">Submit Request</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal fade" id="viewReasonModal" tabindex="-1" aria-labelledby="viewReasonModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title d-flex align-items-center gap-2" id="viewReasonModalLabel">
+            <i class="bi bi-chat-left-text text-info"></i>
+            Reason for Leave Request: <span id="viewReasonRequestId"></span>
+          </h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <p id="viewLeaveReasonText"></p>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal fade" id="confirmationModal" tabindex="-1" aria-labelledby="confirmationModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="confirmationModalLabel"><i class="bi bi-check-circle-fill me-2"></i>Success!</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <p id="confirmationMessage"></p>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-primary" data-bs-dismiss="modal">OK</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      const sidebarToggle = document.getElementById('sidebarToggle');
+      const sidebar = document.getElementById('sidebar');
+      const sidebarBackdrop = document.getElementById('sidebarBackdrop');
+      const mainContent = document.getElementById('mainContent');
+      const topNavbar = document.getElementById('topNavbar');
+
+      function toggleSidebar() {
+        sidebar.classList.toggle('show');
+        sidebarBackdrop.classList.toggle('show');
+        document.body.classList.toggle('sidebar-visible');
+      }
+
+      sidebarToggle.addEventListener('click', toggleSidebar);
+      sidebarBackdrop.addEventListener('click', toggleSidebar);
+
+      // Dark Mode Toggle
+      const darkModeToggle = document.getElementById('darkModeToggle');
+      const currentTheme = localStorage.getItem('theme');
+      if (currentTheme) {
+        document.body.classList.add(currentTheme);
+        if (currentTheme === 'dark-mode') {
+          darkModeToggle.querySelector('i').classList.replace('bi-moon-fill', 'bi-sun-fill');
+        }
+      }
+      darkModeToggle.addEventListener('click', function() {
+        document.body.classList.toggle('dark-mode');
+        let theme = 'light-mode';
+        if (document.body.classList.contains('dark-mode')) {
+          theme = 'dark-mode';
+          this.querySelector('i').classList.replace('bi-moon-fill', 'bi-sun-fill');
+        } else {
+          this.querySelector('i').classList.replace('bi-sun-fill', 'bi-moon-fill');
+        }
+        localStorage.setItem('theme', theme);
+      });
+
+      // Flatpickr for date range filter
+      flatpickr("#dateRangePicker", {
+        mode: "range",
+        dateFormat: "Y-m-d",
+      });
+
+      // Flatpickr for Request Leave Modal
+      const leaveStartDateFlatpickr = flatpickr("#leaveStartDate", {
+        dateFormat: "Y-m-d",
+        onChange: function(selectedDates, dateStr, instance) {
+          if (selectedDates.length > 0 && leaveEndDateFlatpickr.selectedDates[0]) {
+            calculateDays(leaveStartDateFlatpickr, leaveEndDateFlatpickr);
+          }
+        }
+      });
+      const leaveEndDateFlatpickr = flatpickr("#leaveEndDate", {
+        dateFormat: "Y-m-d",
+        onChange: function(selectedDates, dateStr, instance) {
+          if (selectedDates.length > 0 && leaveStartDateFlatpickr.selectedDates[0]) {
+            calculateDays(leaveStartDateFlatpickr, leaveEndDateFlatpickr);
+          }
+        }
+      });
+      function calculateDays(startDateInstance, endDateInstance) {
+        const start = startDateInstance.selectedDates[0];
+        const end = endDateInstance.selectedDates[0];
+        if (start && end) {
+          const diffTime = Math.abs(end - start);
+          const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24)) + 1;
+          console.log(`Calculated days: ${diffDays}`);
+        }
+      }
+
+      // --- Dummy Data for Employee's Leave Requests ---
+      // In a real application, this would be fetched from a backend for the logged-in employee
+      let myLeaveRequests = [
+        {
+          requestId: 'LR001',
+          leaveType: 'Sick Leave',
+          startDate: '2025-06-15',
+          endDate: '2025-06-16',
+          days: 2,
+          status: 'Pending',
+          reason: 'Sudden fever and body ache.'
+        },
+        {
+          requestId: 'LR002',
+          leaveType: 'Vacation Leave',
+          startDate: '2025-07-01',
+          endDate: '2025-07-05',
+          days: 5,
+          status: 'Approved',
+          reason: 'Planned family vacation to the beach.'
+        },
+        {
+          requestId: 'LR003',
+          leaveType: 'Emergency Leave',
+          startDate: '2025-08-01',
+          endDate: '2025-08-01',
+          days: 1,
+          status: 'Rejected',
+          reason: 'Urgent personal matter.'
+        },
+        {
+          requestId: 'LR004',
+          leaveType: 'Vacation Leave',
+          startDate: '2025-09-10',
+          endDate: '2025-09-15',
+          days: 6,
+          status: 'Pending',
+          reason: 'Trip to visit relatives.'
+        }
+      ];
+
+      const leaveRequestsTable = document.getElementById('leaveRequestsTable');
+      const viewReasonModal = new bootstrap.Modal(document.getElementById('viewReasonModal'));
+      const confirmationModal = new bootstrap.Modal(document.getElementById('confirmationModal'));
+
+      function renderLeaveRequests() {
+        const tbody = leaveRequestsTable.querySelector('tbody');
+        tbody.innerHTML = '';
+
+        const leaveTypeFilter = document.getElementById('leaveTypeFilter').value.toLowerCase();
+        const dateRangeFilter = document.getElementById('dateRangePicker').value;
+        const statusFilter = document.getElementById('statusFilter').value;
+
+        let filteredRequests = myLeaveRequests.filter(req => {
+          const matchesType = leaveTypeFilter === '' || req.leaveType.toLowerCase().includes(leaveTypeFilter);
+          const matchesStatus = statusFilter === '' || req.status === statusFilter;
+
+          let matchesDateRange = true;
+          if (dateRangeFilter) {
+            const [start, end] = dateRangeFilter.split(' to ');
+            if (start && end) {
+              matchesDateRange = req.startDate >= start && req.endDate <= end;
+            }
+          }
+          return matchesType && matchesStatus && matchesDateRange;
+        });
+
+        if (filteredRequests.length === 0) {
+          tbody.innerHTML = `<tr><td colspan="7" class="text-center text-muted">No leave requests found matching your criteria.</td></tr>`;
+          updateSummaryCards(0, 0, 0); // Update summary cards to zero if no data
+          return;
+        }
+
+        let pendingCount = 0;
+        let approvedCount = 0;
+        let rejectedCount = 0;
+
+        filteredRequests.forEach(req => {
+          const row = document.createElement('tr');
+          let statusBadgeClass;
+          switch (req.status) {
+            case 'Approved':
+              statusBadgeClass = 'success';
+              approvedCount++;
+              break;
+            case 'Pending':
+              statusBadgeClass = 'warning';
+              pendingCount++;
+              break;
+            case 'Rejected':
+              statusBadgeClass = 'danger';
+              rejectedCount++;
+              break;
+            default:
+              statusBadgeClass = 'secondary';
+          }
+          row.innerHTML = `
+            <td>${req.requestId}</td>
+            <td>${req.leaveType}</td>
+            <td>${req.startDate}</td>
+            <td>${req.endDate}</td>
+            <td>${req.days}</td>
+            <td><span class="badge bg-${statusBadgeClass}">${req.status}</span></td>
+            <td class="text-center">
+              <div class="dropdown">
+                <button class="btn btn-outline-secondary btn-sm dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">Manage</button>
+                <ul class="dropdown-menu">
+                  <li><a class="dropdown-item view-reason" href="#" data-request-id="${req.requestId}"><i class="bi bi-card-text me-2"></i> View Reason</a></li>
+                  ${req.status === 'Pending' ? `
+                  <li><hr class="dropdown-divider"></li>
+                  <li><a class="dropdown-item edit-leave" href="#" data-request-id="${req.requestId}"><i class="bi bi-pencil me-2"></i> Edit</a></li>
+                  <li><a class="dropdown-item cancel-leave text-danger" href="#" data-request-id="${req.requestId}"><i class="bi bi-x-lg me-2"></i> Cancel Request</a></li>
+                  ` : ''}
+                </ul>
+              </div>
+            </td>
+          `;
+          tbody.appendChild(row);
+        });
+        updateSummaryCards(pendingCount, approvedCount, rejectedCount);
+      }
+
+      function updateSummaryCards(pending, approved, rejected) {
+        document.getElementById('myPendingRequests').textContent = pending;
+        document.getElementById('myApprovedLeaves').textContent = approved;
+        document.getElementById('myRejectedRequests').textContent = rejected;
+      }
+
+      // Initial render and filter event listeners
+      renderLeaveRequests();
+      document.getElementById('leaveTypeFilter').addEventListener('input', renderLeaveRequests);
+      document.getElementById('dateRangePicker').addEventListener('change', renderLeaveRequests);
+      document.getElementById('statusFilter').addEventListener('change', renderLeaveRequests);
+
+      // Table action listeners
+      leaveRequestsTable.addEventListener('click', function(event) {
+        const target = event.target.closest('.dropdown-item');
+        if (!target) return;
+        const requestId = target.dataset.requestId;
+        const request = myLeaveRequests.find(req => req.requestId === requestId);
+
+        if (target.classList.contains('view-reason')) {
+          if (request) {
+            document.getElementById('viewReasonRequestId').textContent = requestId;
+            document.getElementById('viewLeaveReasonText').textContent = request.reason;
+            viewReasonModal.show();
+          }
+        } else if (target.classList.contains('edit-leave')) {
+            // In a real app, populate an edit modal with request data
+            // For now, a simple alert
+            showConfirmationModal('Edit functionality not yet implemented. Request ID: ' + requestId);
+        } else if (target.classList.contains('cancel-leave')) {
+            // Confirm cancellation
+            if (confirm('Are you sure you want to cancel this leave request?')) {
+                myLeaveRequests = myLeaveRequests.filter(req => req.requestId !== requestId);
+                renderLeaveRequests();
+                showConfirmationModal('Leave request ' + requestId + ' has been cancelled.');
+            }
+        }
+      });
+
+      // Handle Submit Request in Request Leave Modal
+      document.getElementById('requestLeaveForm').addEventListener('submit', function(event) {
+        event.preventDefault();
+        const leaveType = document.getElementById('leaveType').value;
+        const leaveStartDate = document.getElementById('leaveStartDate').value;
+        const leaveEndDate = document.getElementById('leaveEndDate').value;
+        const leaveReason = document.getElementById('leaveReason').value;
+        // const supportingDocument = document.getElementById('supportingDocument').files[0]; // For future use
+
+        const start = new Date(leaveStartDate);
+        const end = new Date(leaveEndDate);
+        const diffTime = Math.abs(end - start);
+        const newDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24)) + 1;
+
+        const newRequestId = 'LR' + (myLeaveRequests.length + 1).toString().padStart(3, '0');
+        myLeaveRequests.push({
+          requestId: newRequestId,
+          leaveType: leaveType,
+          startDate: leaveStartDate,
+          endDate: leaveEndDate,
+          days: newDays,
+          status: 'Pending', // New requests are always pending
+          reason: leaveReason
+        });
+        renderLeaveRequests();
+        this.reset();
+        leaveStartDateFlatpickr.clear();
+        leaveEndDateFlatpickr.clear();
+        bootstrap.Modal.getInstance(document.getElementById('requestLeaveModal')).hide();
+        showConfirmationModal('Your leave request (' + newRequestId + ') has been submitted successfully for approval!');
+      });
+
+      function showConfirmationModal(message) {
+        document.getElementById('confirmationMessage').textContent = message;
+        confirmationModal.show();
+      }
+
+      // Dummy Employee Name for Navbar
+      document.getElementById('employeeNameDisplay').innerHTML = `John Doe<br><small>Welcome!</small>`;
+
+    });
+  </script>
+</body>
+</html>
